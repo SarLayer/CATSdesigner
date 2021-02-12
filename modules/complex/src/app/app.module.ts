@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 import { appReducers } from "./store/reducers/app.reducers";
@@ -15,7 +14,6 @@ import { ComplexGridModule } from "./complexGrid/complexGrid.module";
 import { ComplexMaterialModule } from "./complexMaterial/complexMaterial.module";
 import { AppRoutingModule } from './app-routing.module';
 import { MatModule } from "./mat.module";
-import { FilesEffects } from './store/effects/files.effects';
 
 
 
@@ -32,7 +30,6 @@ import { FilesEffects } from './store/effects/files.effects';
     HttpClientModule,
     StoreModule.forRoot(appReducers),
     StoreDevtoolsModule.instrument(),
-    EffectsModule.forRoot([FilesEffects]),
     MatModule,
     AppRoutingModule,
     ComplexMaterialModule,

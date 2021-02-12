@@ -1,6 +1,4 @@
-﻿using Application.Core.Helpers;
-
-namespace LMPlatform.UI.ViewModels.SubjectModulesViewModel.ModulesViewModel
+﻿namespace LMPlatform.UI.ViewModels.SubjectModulesViewModel.ModulesViewModel
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -139,7 +137,7 @@ namespace LMPlatform.UI.ViewModels.SubjectModulesViewModel.ModulesViewModel
                 ShortName = ShortName,
                 Attachments = PathFile,
                 Id = PracticalId
-            }, attachments, UserContext.CurrentUserId);
+            }, attachments, WebSecurity.CurrentUserId);
             return true;
         }
     }

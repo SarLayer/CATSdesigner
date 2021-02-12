@@ -6,11 +6,9 @@ using Application.Core;
 using Application.Core.Data;
 using Application.Infrastructure.DPManagement;
 using Application.Infrastructure.DTO;
-using LMPlatform.UI.Attributes;
 
 namespace LMPlatform.UI.ApiControllers.DP
 {
-    [JwtAuth]
     public class StudentController : ApiController
     {
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Suppression is OK here.")]

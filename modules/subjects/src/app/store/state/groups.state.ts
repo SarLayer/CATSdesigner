@@ -1,11 +1,11 @@
 import {Group} from '../../models/group.model';
 
-export interface IGroupsState {
+export interface GroupsState {
   groups: Group[];
   currentGroup: Group;
 }
 
-export const initialGroupsState: IGroupsState = {
+export const initialGroupsState: GroupsState = {
   groups: [],
   currentGroup: null
 };

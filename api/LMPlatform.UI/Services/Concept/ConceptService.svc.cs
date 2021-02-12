@@ -14,12 +14,9 @@ using Application.Infrastructure.StudentManagement;
 using LMPlatform.Models;
 using LMPlatform.UI.Services.Modules;
 using System.Configuration;
-using Application.Core.Helpers;
-using LMPlatform.UI.Attributes;
 
 namespace LMPlatform.UI.Services.Concept
 {
-    [JwtAuth]
     public class ConceptService : IConceptService
     {
         private const string SuccessCode = "200";
@@ -78,7 +75,7 @@ namespace LMPlatform.UI.Services.Concept
         {
             try
             {
-                //var authorId = UserContext.CurrentUserId;
+                //var authorId = WebSecurity.CurrentUserId;
                 var root = ConceptManagementService.CreateRootConcept(name, 2, subjectId);
                 var subj = SubjectManagementService.GetSubject(new Query<Subject>(s => s.Id == subjectId));
                 return new ConceptResult
@@ -103,7 +100,7 @@ namespace LMPlatform.UI.Services.Concept
         {
             try
             {
-                //var authorId = UserContext.CurrentUserId;
+                //var authorId = WebSecurity.CurrentUserId;
                 //var concepts = CurrentUserIsLector()  ?
                 //    ConceptManagementService.GetRootElements(authorId) :
                 //    ConceptManagementService.GetRootElementsBySubject(subjectId).Where(c => c.Published);
@@ -168,7 +165,7 @@ namespace LMPlatform.UI.Services.Concept
         {
             try
             {
-                //var authorId = UserContext.CurrentUserId;
+                //var authorId = WebSecurity.CurrentUserId;
                 var concepts = ConceptManagementService.GetElementsByParentId(parentId);
                 var concept = ConceptManagementService.GetById(parentId);
 
@@ -197,7 +194,7 @@ namespace LMPlatform.UI.Services.Concept
             try
             {
                 var source = ConceptManagementService.GetById(conceptId);
-                var canDelete = source != null && source.Author.Id == UserContext.CurrentUserId;
+                var canDelete = source != null && source.Author.Id == WebSecurity.CurrentUserId;
                 if (canDelete || true)
                 {
                     ConceptManagementService.Remove(conceptId, source.IsGroup);

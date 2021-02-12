@@ -4,11 +4,9 @@ using System.Web.Mvc;
 using Application.Core.UI.Controllers;
 using Application.Infrastructure.FoldersManagement;
 using Application.Infrastructure.SubjectManagement;
-using LMPlatform.UI.Attributes;
 
 namespace LMPlatform.UI.Controllers
 {
-    [JwtAuth]
     public class MaterialsController : BasicController
     {
         public IFoldersManagementService FoldersManagementService =>

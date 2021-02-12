@@ -26,6 +26,13 @@ namespace LMPlatform.AdaptiveLearningCore
             return adaptivityAlgorithm.GetResultByCurrentThema(currentThemaId, currentThemaResult, allAvilableThemas);
         }
 
+        public List<int> GetNeededThemaList(IEnumerable<PredTestResults> predTestResults)
+        {
+            adaptivityAlgorithm.MarkAllAvailableThemas(predTestResults);
+
+            return predTestResults.Where(x => x.ThemaResume == ThemaResume.NEED_TO_LEARN).Select(x => x.ThemaId).ToList();
+        }
+
         public void ProcessPredTestResults(IEnumerable<PredTestResults> predTestResults)
         {
             adaptivityAlgorithm.MarkAllAvailableThemas(predTestResults);

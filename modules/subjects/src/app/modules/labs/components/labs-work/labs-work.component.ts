@@ -1,25 +1,22 @@
-import { ConvertedAttachment } from './../../../../models/file/converted-attachment.model';
-import { DialogService } from './../../../../services/dialog.service';
-import { Observable } from 'rxjs';
 import { MatTable } from '@angular/material';
+import { Observable } from 'rxjs';
+import {ComponentType} from '@angular/cdk/typings/portal';
 import {Store} from '@ngrx/store';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import { SubSink } from 'subsink';
 import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef, AfterViewChecked, ViewChild } from '@angular/core';
-import { filter } from 'rxjs/operators';
 
 import {Lab} from "../../../../models/lab.model";
 import {IAppState} from '../../../../store/state/app.state';
 import {DialogData} from '../../../../models/dialog-data.model';
 import {LabWorkPopoverComponent} from './lab-work-popover/lab-work-popover.component';
 import {DeletePopoverComponent} from '../../../../shared/delete-popover/delete-popover.component';
-import {Attachment} from '../../../../models/file/attachment.model';
+import {Attachment} from '../../../../models/attachment.model';
 import {FileDownloadPopoverComponent} from '../../../../shared/file-download-popover/file-download-popover.component';
 import * as labsActions from '../../../../store/actions/labs.actions';
-import { CreateLessonEntity } from './../../../../models/form/create-lesson-entity.model';
 import * as labsSelectors from '../../../../store/selectors/labs.selectors';
-import { attachmentConverter } from 'src/app/utils';
-import * as filesActions from '../../../../store/actions/files.actions';
+import { SubSink } from 'subsink';
+import { CreateEntity } from 'src/app/models/form/create-entity.model';
 
 @Component({
   selector: 'app-labs-work',
@@ -28,26 +25,28 @@ import * as filesActions from '../../../../store/actions/files.actions';
 })
 export class LabsWorkComponent implements OnInit, OnDestroy, AfterViewChecked {
 
-  @Input() isTeacher: boolean;
+  @Input() teacher: boolean;
   @ViewChild('table', { static: false }) table: MatTable<Lab>;
   private subs = new SubSink();
-  public labs$: Observable<Lab[]>;
+  public displayedColumns: string[] = ['position', 'theme', 'shortName', 'clock'];
+  public labs: Lab[] = [];
+  private labsCopy: Lab[] = [];
   private prefix = 'ЛР';
 
   constructor(
     private store: Store<IAppState>,
-    private dialogService: DialogService,
+    private dialog: MatDialog,
     private cdRef: ChangeDetectorRef,
   ) { }
 
   ngOnInit() {
     this.store.dispatch(labsActions.loadLabs());
-    this.labs$ = this.store.select(labsSelectors.getLabs);
-  }
-
-  getDisplayedColumns(): string[] {
-    const defaultColumns = ['position', 'theme', 'shortName', 'clock'];
-    return defaultColumns.concat(this.isTeacher ? 'actions' : 'files');
+    this.subs.add(this.store.select(labsSelectors.getLabs).subscribe(labs => {
+      this.labs = labs;
+      this.labsCopy = [...labs.map(l => ({ ...l }))];
+    }));
+    const column = this.teacher ? 'actions' : 'download';
+    this.displayedColumns.push(column);
   }
 
   ngAfterViewChecked(): void {
@@ -56,23 +55,32 @@ export class LabsWorkComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
+    const toSave = this.labs.filter(l => {
+      const copy =  this.labsCopy.find(lc => l.labId === lc.labId);
+      return l.order !== copy.order || l.shortName !== copy.shortName;
+    }
+    );
+    if (toSave.length) {
+      this.store.dispatch(labsActions.updateLabs({ labs: toSave }));
+    }
     this.store.dispatch(labsActions.resetLabs());
   }
 
-  constructorLab(labsCount: number, lab: Lab): void {
-    const newLab = this.getLab(labsCount, lab);
+  constructorLab(lab?: Lab) {
+    const newLab = this.getLab(lab);
+
     const dialogData: DialogData = {
-      title: lab ? 'Редактирование лабораторной работы' : 'Добавление лабораторной работы',
+      title: lab ? 'Редактирование лабораторную работу' : 'Добавление лабораторную работу',
       buttonText: 'Сохранить',
       model: newLab
     };
-    const dialogRef = this.dialogService.openDialog(LabWorkPopoverComponent, dialogData);
+    const dialogRef = this.openDialog(dialogData, LabWorkPopoverComponent);
 
     this.subs.add(
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           result.attachments = JSON.stringify(result.attachments);
-          this.store.dispatch(labsActions.saveLab({ lab: result as CreateLessonEntity }));
+          this.store.dispatch(labsActions.createLab({ lab: result as CreateEntity }));
         }
       })
     );
@@ -81,15 +89,15 @@ export class LabsWorkComponent implements OnInit, OnDestroy, AfterViewChecked {
   deleteLab(lab: Lab) {
     const dialogData: DialogData = {
       title: 'Удаление лабораторной работы',
-      body: 'лабораторную работу "' + lab.Theme + '"',
+      body: 'лабораторную работу "' + lab.theme + '"',
       buttonText: 'Удалить'
     };
-    const dialogRef = this.dialogService.openDialog(DeletePopoverComponent, dialogData);
+    const dialogRef = this.openDialog(dialogData, DeletePopoverComponent);
 
     this.subs.add(
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.store.dispatch(labsActions.deleteLab({ id: lab.LabId }));
+          this.store.dispatch(labsActions.deleteLab({ id: lab.labId }));
         }
       })
     );
@@ -99,38 +107,55 @@ export class LabsWorkComponent implements OnInit, OnDestroy, AfterViewChecked {
     const dialogData: DialogData = {
       title: 'Файлы',
       buttonText: 'Скачать',
-      body: attachments.map(attachment => attachmentConverter(attachment))
+      body: JSON.parse(JSON.stringify(attachments))
     };
-    const dialogRef = this.dialogService.openDialog(FileDownloadPopoverComponent, dialogData);
+    const dialogRef = this.openDialog(dialogData, FileDownloadPopoverComponent);
 
-    this.subs.add(
-      dialogRef.afterClosed().pipe(
-        filter(r => !!r)
-      ).subscribe((result: ConvertedAttachment[]) => {
-        this.store.dispatch(filesActions.getAttachmentsAsZip({ attachmentsIds: result.map(r => r.id) }));
-      })
-    );
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this._filesDownload(result)
+      }
+    });
+  }
+
+  _filesDownload(attachments: any[]) {
+    attachments.forEach(attachment => {
+      if (attachment.isDownload) {
+        setTimeout(() => {
+          window.open('http://localhost:8080/api/Upload?fileName=' + attachment.pathName + '//' + attachment.fileName)
+        }, 1000)
+
+      }
+    });
+  }
+
+  openDialog(data: DialogData, popover: ComponentType<any>): MatDialogRef<any> {
+    return this.dialog.open(popover, {data});
   }
 
   drop(event: CdkDragDrop<Lab[]>): void {
-    const prevIndex = event.container.data.findIndex(i => i.LabId == event.item.data.LabId);
-    if (prevIndex !== event.currentIndex) {
-      moveItemInArray(event.container.data, prevIndex, event.currentIndex);
-      this.store.dispatch(labsActions.updateOrder({ prevIndex, currentIndex: event.currentIndex }));
-      this.table.renderRows();
+    console.log(event.item.data);
+    const prevIndex = this.labs.findIndex(l => l.labId === event.item.data.labId);
+    if (prevIndex === event.currentIndex) {
+      return;
     }
+    this.labs[prevIndex].order = event.currentIndex + 1;
+    this.labs[prevIndex].shortName = `${this.prefix}${this.labs[prevIndex].order}`;
+    this.labs[event.currentIndex].order = prevIndex + 1;
+    this.labs[event.currentIndex].shortName = `${this.prefix}${this.labs[event.currentIndex].order}`;
+    moveItemInArray(this.labs, prevIndex, event.currentIndex);
+    this.table.renderRows();
   }
 
-  private getLab(labsCount: number, lab: Lab) {
-    const order = lab ? lab.Order : labsCount;
+  private getLab(lab?: Lab) {
     return {
-      id: lab ? lab.LabId : 0,
-      theme: lab ? lab.Theme : '',
-      duration: lab ? lab.Duration : '',
-      order: lab ? lab.Order : order,
-      pathFile: lab ? lab.PathFile : '',
-      attachments: lab ? lab.Attachments.map(a => attachmentConverter(a)) : [],
-      shortName: lab ? lab.ShortName : `${this.prefix}${order}`
+      id: lab ? lab.labId : 0,
+      theme: lab ? lab.theme : '',
+      duration: lab ? lab.duration : '',
+      order: lab ? lab.order : this.labs.length + 1,
+      pathFile: lab ? lab.pathFile : '',
+      attachments: lab ? lab.attachments : [],
+      shortName: lab ? lab.shortName : ''
     };
   }
 

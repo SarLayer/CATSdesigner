@@ -3,14 +3,13 @@
 namespace LMPlatform.Models
 {
     using System;
-    using System.ComponentModel.DataAnnotations;
+
     using Application.Core.Data;
 
-    public class ScheduleProtectionLabs : ScheduleBase
+    public class ScheduleProtectionLabs : ModelBase
     {
-        public int? SubjectId { get; set; }
+        public DateTime Date { get; set; }
 
-        public Subject Subject { get; set; }
         public int SuGroupId { get; set; }
 
         public SubGroup SubGroup { get; set; }

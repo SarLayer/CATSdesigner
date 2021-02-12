@@ -8,7 +8,7 @@ import { ResetPasswordModalComponent } from '../reset-password-modal/reset-passw
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
-  styleUrls: ['./change-password.component.less']
+  styleUrls: ['./change-password.component.css']
 })
 export class ChangePasswordComponent implements OnInit {
 

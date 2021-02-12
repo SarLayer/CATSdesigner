@@ -1,6 +1,4 @@
-﻿using LMPlatform.UI.Attributes;
-
-namespace LMPlatform.UI.ApiControllers
+﻿namespace LMPlatform.UI.ApiControllers
 {
     using System;
     using System.Linq;
@@ -14,7 +12,6 @@ namespace LMPlatform.UI.ApiControllers
     using LMPlatform.UI.ViewModels.SubjectModulesViewModel.ModulesViewModel;
     using Newtonsoft.Json;
 
-    [JwtAuth]
     public class NewsController : ApiController
     {
         private readonly LazyDependency<ISubjectManagementService> subjectManagementService = new LazyDependency<ISubjectManagementService>();

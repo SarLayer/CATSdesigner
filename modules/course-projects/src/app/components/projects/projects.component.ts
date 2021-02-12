@@ -92,7 +92,7 @@ export class ProjectsComponent implements OnInit {
         label: 'Выбор темы курсового проекта',
         message: 'Вы действительно хотите выбрать данную тему курсового проекта?',
         actionName: 'Выбрать',
-        color: 'primary'
+        color: 'accent'
       }
     });
 
@@ -116,18 +116,16 @@ export class ProjectsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result != null && result.name != null) {
-        var checkTheme = this.projects.find((i) => i.Theme === result.name);
-        if (checkTheme == undefined){
-          this.projectsService.editProject(null, this.subjectId, result.name, result.selectedGroups.map(group => group.GroupId))
+      var checkTheme = this.projects.find((i) => i.Theme === result.name);
+      if (result != null && checkTheme == undefined) {
+        this.projectsService.editProject(null, this.subjectId, result.name, result.selectedGroups.map(group => group.Id))
           .subscribe(() => {
             this.ngOnInit();
             this.addFlashMessage('Тема успешно сохранена');
           });
-        }
-        else{
-          this.addFlashMessage('Такая тема уже существует');
-        } 
+      }
+      else{
+        this.addFlashMessage('Такая тема уже существует');
       }
     });
   }
@@ -146,7 +144,7 @@ export class ProjectsComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result != null) {
-          this.projectsService.editProject(project.Id, this.subjectId, result.name, result.selectedGroups.map(group => group.GroupId))
+          this.projectsService.editProject(project.Id, this.subjectId, result.name, result.selectedGroups.map(group => group.Id))
             .subscribe(() => {
               this.ngOnInit();
               this.addFlashMessage('Тема успешно сохранена');
@@ -207,9 +205,23 @@ export class ProjectsComponent implements OnInit {
   }
 
   approveChoice(project: Project) {
-    this.projectsService.approveChoice(project.Id).subscribe(() => {
-      this.ngOnInit();
-      this.addFlashMessage('Тема успешно подтверждена');
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '540px',
+      data: {
+        label: 'Подтверждение выбора темы курсового проекта',
+        message: 'Вы действительно хотите подтвердить выбор данной темы курсового проекта?',
+        actionName: 'Подтвердить',
+        color: 'accent'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result != null && result) {
+        this.projectsService.approveChoice(project.Id).subscribe(() => {
+          this.ngOnInit();
+          this.addFlashMessage('Тема успешно подтверждена');
+        });
+      }
     });
   }
 

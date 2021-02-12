@@ -5,15 +5,12 @@ using System.Web.Http;
 using System.Web.Http.ModelBinding;
 using Application.Core;
 using Application.Core.Data;
-using Application.Core.Helpers;
 using Application.Infrastructure.DPManagement;
 using Application.Infrastructure.DTO;
-using LMPlatform.UI.Attributes;
 using WebMatrix.WebData;
 
 namespace LMPlatform.UI.ApiControllers.DP
 {
-    [JwtAuth]
     public class DiplomProjectController : ApiController
     {
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Suppression is OK here.")]
@@ -26,7 +23,7 @@ namespace LMPlatform.UI.ApiControllers.DP
 
         public PagedList<DiplomProjectData> Get([ModelBinder]GetPagedListParams parms)
         {
-            return DpManagementService.GetProjects(UserContext.CurrentUserId, parms);
+            return DpManagementService.GetProjects(WebSecurity.CurrentUserId, parms);
         }
 
         public DiplomProjectData Get(int id)
@@ -46,7 +43,7 @@ namespace LMPlatform.UI.ApiControllers.DP
 
         public void Delete(int id)
         {
-            DpManagementService.DeleteProject(UserContext.CurrentUserId, id);
+            DpManagementService.DeleteProject(WebSecurity.CurrentUserId, id);
         }
 
         private HttpResponseMessage SaveProject(DiplomProjectData project)
@@ -56,7 +53,7 @@ namespace LMPlatform.UI.ApiControllers.DP
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
 
-            project.LecturerId = UserContext.CurrentUserId;
+            project.LecturerId = WebSecurity.CurrentUserId;
             DpManagementService.SaveProject(project);
             return new HttpResponseMessage(HttpStatusCode.OK);
         }

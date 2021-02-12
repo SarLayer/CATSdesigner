@@ -1,4 +1,4 @@
-import { Attachment } from './file/attachment.model';
+import { Attachment } from './attachment.model';
 
 export class Practical {
     Theme: string;

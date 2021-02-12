@@ -17,15 +17,7 @@
     "lib": [
       "es2018",
       "dom"
-    ],
-    "paths": {
-      "module-communication": [
-        "dist/module-communication"
-      ],
-      "module-communication/*": [
-        "dist/module-communication/*"
-      ]
-    }
+    ]
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CoreService } from 'src/app/core/services/core.service';
 
 @Component({
   selector: 'app-content-layout',
@@ -7,14 +6,10 @@ import { CoreService } from 'src/app/core/services/core.service';
   styleUrls: ['./content-layout.component.less']
 })
 export class ContentLayoutComponent implements OnInit {
-  
-  constructor(
-    private coreService: CoreService
-  ) {
 
-  }
+  constructor() { }
+
   ngOnInit(): void {
-    this.coreService.setupMessageCommunication();
   }
 
 }

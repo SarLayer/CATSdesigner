@@ -6,7 +6,6 @@ using System.Net;
 using System.Text;
 using System.Web.Mvc;
 using Application.Core;
-using Application.Core.Helpers;
 using Application.Core.SLExcel;
 using Application.Core.UI.Controllers;
 using Application.Infrastructure.ConceptManagement;
@@ -22,7 +21,6 @@ using WebMatrix.WebData;
 
 namespace LMPlatform.UI.Controllers
 {
-    [JwtAuth]
     public class TestPassingController : BasicController
     {
         [JwtAuth]
@@ -31,7 +29,7 @@ namespace LMPlatform.UI.Controllers
         {
             var subject = this.SubjectsManagementService.GetSubject(subjectId);
             var available =
-                this.TestPassingService.CheckForSubjectAvailableForStudent(UserContext.CurrentUserId, subjectId);
+                this.TestPassingService.CheckForSubjectAvailableForStudent(WebSecurity.CurrentUserId, subjectId);
             if (available) return JsonResponse(subject);
             this.ViewBag.Message = "Данный предмет не доступен для студента";
             return StatusCode(HttpStatusCode.BadRequest);
@@ -54,7 +52,7 @@ namespace LMPlatform.UI.Controllers
         public JsonResult GetAvailableTests(int subjectId)
         {
             var availableTests = this.TestPassingService
-                .GetAvailableTestsForStudent(UserContext.CurrentUserId, subjectId)
+                .GetAvailableTestsForStudent(WebSecurity.CurrentUserId, subjectId)
                 .Select(test => new
                 {
                     test.Id,
@@ -126,10 +124,10 @@ namespace LMPlatform.UI.Controllers
                     return StatusCode(HttpStatusCode.BadRequest);
                 }
 
-                var answers = this.TestPassingService.GetAnswersForTest(testId, UserContext.CurrentUserId);
+                var answers = this.TestPassingService.GetAnswersForTest(testId, WebSecurity.CurrentUserId);
 
                 var nextQuestion =
-                    this.TestPassingService.GetNextQuestion(testId, UserContext.CurrentUserId, questionNumber);
+                    this.TestPassingService.GetNextQuestion(testId, WebSecurity.CurrentUserId, questionNumber);
                 var testName = this.TestsManagementService.GetTest(testId).Title;
                 this.ViewData["testName"] = testName;
                 if (nextQuestion.Question != null) return JsonResponse(nextQuestion);
@@ -191,7 +189,7 @@ namespace LMPlatform.UI.Controllers
         [HttpGet]
         public JsonResult GetStudentResults(int subjectId)
         {
-            var results = this.TestPassingService.GetStidentResults(subjectId, UserContext.CurrentUserId)
+            var results = this.TestPassingService.GetStidentResults(subjectId, WebSecurity.CurrentUserId)
                 .GroupBy(g => g.TestName)
                 .Select(group => new
                 {
@@ -303,7 +301,7 @@ namespace LMPlatform.UI.Controllers
         {
             this.TestPassingService.MakeUserAnswer(
                 answers != null && answers.Any() ? answers.Select(answerModel => answerModel.ToAnswer()) : null,
-                UserContext.CurrentUserId, testId, questionNumber);
+                WebSecurity.CurrentUserId, testId, questionNumber);
 
             return this.Json("Ok");
         }

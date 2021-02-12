@@ -2,7 +2,7 @@
 {
 	public enum AdaptivityType
 	{
-		EXTENDED,
-		SIMPLE		
+		SIMPLE,
+		EXTENDED
 	}
 }

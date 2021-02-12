@@ -5,7 +5,6 @@ using Application.SearchEngine.SearchMethods;
 using LMPlatform.Data.Repositories;
 using LMPlatform.Models;
 using System;
-using Application.Core.Helpers;
 using Application.Infrastructure.FilesManagement;
 using LMPlatform.Models.BTS;
 using WebMatrix.WebData;
@@ -329,7 +328,7 @@ namespace Application.Infrastructure.ProjectManagement
             foreach (var bug in reportedBugs)
             {
                 bug.ReporterId = project.CreatorId;
-                bug.EditorId = UserContext.CurrentUserId;
+                bug.EditorId = WebSecurity.CurrentUserId;
 
                 BugManagementService.SaveBug(bug);
             }
@@ -345,7 +344,7 @@ namespace Application.Infrastructure.ProjectManagement
                 else
                 {
                     bug.AssignedDeveloperId = 0;
-                    bug.EditorId = UserContext.CurrentUserId;
+                    bug.EditorId = WebSecurity.CurrentUserId;
                 }
 
                 BugManagementService.SaveBug(bug);

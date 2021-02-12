@@ -1,3 +1,4 @@
+import { ConverterService } from 'src/app/services/converter.service';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -9,14 +10,17 @@ import { News } from 'src/app/models/news.model';
 })
 export class NewsRestService {
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private converterService: ConverterService
+    ) { }
 
   public getAllNews(subjectId: number): Observable<News[]> {
     return this.http.get('Services/News/NewsService.svc/GetNews/' + subjectId).pipe(
-      map(res => res['News'])
+      map(res =>  this.converterService.newsModelsConverter(res['News']))
     );
   }
-  
+
   public saveNews(news: any): Observable<any> {
     return this.http.post('Services/News/NewsService.svc/Save', {...news });
   }

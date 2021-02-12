@@ -1,39 +1,29 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Group } from "../../models/group.model";
 import { map } from "rxjs/operators";
+import { ConverterService } from "../converter.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class GroupsRestService {
 
+  private allGroups: Observable<Group[]>;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+              private converterService: ConverterService) { }
 
-  public getAllGroups(subjectId: number): Observable<Group[]> {
+  public getAllGroups(subjectId: number): Observable<any> {
     return this.http.get('Services/CoreService.svc/GetGroupsV2/' + subjectId).pipe(
-      map(res => res['Groups'])
+      map(res => this.converterService.groupsModelConverter(res['Groups']))
     );
   }
 
-  public getAllOldGroups(subjectId: number): Observable<Group[]> {
+  public getAllOldGroups(subjectId: number): Observable<any> {
     return this.http.get('Services/CoreService.svc/GetGroupsV3/' + subjectId).pipe(
-      map(res => res['Groups'])
-    );
-  }
-
-  public getUserSubjectGroup(subjectId: number, userId: string): Observable<Group> {
-    const params = new HttpParams()
-      .set('subjectId', subjectId.toString())
-      .set('userId', userId);
-    return this.http.get('Services/CoreService.svc/GetUserSubjectGroup', { params }).pipe(
-      map(res => res['Group'])
+      map(res => this.converterService.groupsModelConverter(res['Groups']))
     );
   }
 }
-
-
-
-

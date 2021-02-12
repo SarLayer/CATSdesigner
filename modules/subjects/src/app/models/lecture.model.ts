@@ -1,11 +1,11 @@
-import { Attachment } from './file/attachment.model';
+import { Attachment } from './attachment.model';
 
 export class Lecture {
-  LecturesId: number;
-  Order: number;
-  Theme: string;
-  Duration: number;
-  PathFile: string;
-  SubjectId: number;
-  Attachments: Attachment[];
+  id: string;
+  order: string;
+  theme: string;
+  duration: string;
+  pathFile: string;
+  subjectId: string;
+  attachments: Attachment[] | any;
 }

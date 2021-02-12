@@ -12,7 +12,6 @@ using System.Web.Mvc;
 using Application.Core;
 using Application.Core.Data;
 using Application.Core.Extensions;
-using Application.Core.Helpers;
 using Application.Infrastructure.GroupManagement;
 using Application.Infrastructure.LecturerManagement;
 using Application.Infrastructure.StudentManagement;
@@ -26,7 +25,7 @@ using LMPlatform.UI.Attributes;
 
 namespace LMPlatform.UI.Services
 {
-    [JwtAuth]
+    [Authorize]
     public class CoreService : ICoreService
 	{
 		private readonly LazyDependency<IGroupManagementService> groupManagementService = new LazyDependency<IGroupManagementService>();
@@ -57,15 +56,6 @@ namespace LMPlatform.UI.Services
 		{
 			try
 			{
-				var isUserAssigned = SubjectManagementService.IsUserAssignedToSubject(UserContext.CurrentUserId, subjectId);
-				if (!isUserAssigned)
-				{
-					return new ResultViewData
-					{
-						Code = "500",
-						Message = "Пользователь не присоединён к предмету"
-					};
-				}
 				this.LecturerManagementService.DisjoinLector(subjectId, lectorId, CurrentUserId);
 
 				return new ResultViewData
@@ -112,18 +102,8 @@ namespace LMPlatform.UI.Services
 
 		public ResultViewData JoinLector(int subjectId, int lectorId)
 		{
-
 			try
 			{
-				var isUserAssigned = SubjectManagementService.IsUserAssignedToSubject(UserContext.CurrentUserId, subjectId);
-				if (!isUserAssigned)
-				{
-					return new ResultViewData
-					{
-						Code = "500",
-						Message = "Пользователь не присоединён к предмету"
-					};
-				}
 				this.LecturerManagementService.Join(subjectId, lectorId, CurrentUserId);
 
 				return new ResultViewData
@@ -171,7 +151,7 @@ namespace LMPlatform.UI.Services
 		{
 			try
 			{
-				var subjects = SubjectManagementService.GetSubjectsByLectorOwner(this.CurrentUserId, lite: true);
+				var subjects = this.SubjectManagementService.GetSubjectsByLectorOwner(this.CurrentUserId, lite: true);
 
 				return new SubjectsResult
 				{
@@ -313,7 +293,7 @@ namespace LMPlatform.UI.Services
 		{
 			try
 			{
-				var groups = this.GroupManagementService.GetLecturesGroups(UserContext.CurrentUserId);
+				var groups = this.GroupManagementService.GetLecturesGroups(WebSecurity.CurrentUserId);
 
 				var groupsViewModel = new List<GroupsViewData>();
 
@@ -426,47 +406,15 @@ namespace LMPlatform.UI.Services
             }
         }
 
-		public GroupResult GetUserSubjectGroup(int subjectId, int userId)
-		{
-			var group = GroupManagementService.GetGroup(new Query<Group>(e => e.SubjectGroups.Any(x => x.SubjectId == subjectId && x.IsActiveOnCurrentGroup)
-			&& e.Students.Any(x => x.Id == userId)));
-			var subGroups = SubjectManagementService.GetSubGroupsV2(subjectId, group.Id);
-
-			return new GroupResult
-			{
-				Group = new GroupsViewData
-				{
-					GroupId = group.Id,
-					GroupName = group.Name,
-					SubGroupsOne = subGroups.Any(x => x.Name == "first") ? new SubGroupsViewData
-					{
-						Name = "Подгруппа 1",
-						SubGroupId = subGroups.First(e => e.Name == "first").Id
-					} : new SubGroupsViewData(),
-					SubGroupsTwo = subGroups.Any(x => x.Name == "second") ? new SubGroupsViewData
-					{
-						Name = "Подгруппа 2",
-						SubGroupId = subGroups.First(e => e.Name == "second").Id
-					} : new SubGroupsViewData(),
-					SubGroupsThird = subGroups.Any(x => x.Name == "third") ? new SubGroupsViewData
-					{
-						Name = "Подгруппа 3",
-						SubGroupId = subGroups.First(e => e.Name == "third").Id
-					} : new SubGroupsViewData(),
-				}
-			};
-
-		}
-
-		public GroupsResult GetGroupsV3(string subjectId)
+        public GroupsResult GetGroupsV3(string subjectId)
         {
             try
             {
                 var id = int.Parse(subjectId);
-				var groups = this.GroupManagementService.GetGroups(new Query<Group>(e => e.SubjectGroups.Any(x => x.SubjectId == id && !x.IsActiveOnCurrentGroup)));
+                var groups = this.GroupManagementService.GetGroups(new Query<Group>(e => e.SubjectGroups.Any(x => x.SubjectId == id && !x.IsActiveOnCurrentGroup)));
 
 
-				var groupsViewData = new List<GroupsViewData>();
+                var groupsViewData = new List<GroupsViewData>();
 
                 foreach (var @group in groups)
                 {
@@ -510,7 +458,81 @@ namespace LMPlatform.UI.Services
             }
         }
 
+        public LecturesMarkVisitingResult GetLecturesMarkVisitingV2(int subjectId, int groupId)
+		{
+			try
+			{
+				var groups = this.GroupManagementService.GetGroup(groupId);
 
+				var lecturesVisitingData = SubjectManagementService.GetScheduleVisitings(new Query<LecturesScheduleVisiting>(e => e.SubjectId == subjectId)).OrderBy(e => e.Date);
+
+				var lecturesVisiting = new List<LecturesMarkVisitingViewData>();
+
+				foreach (var student in groups.Students.Where(e => e.Confirmed == null || e.Confirmed.Value).OrderBy(e => e.FullName))
+				{
+					var data = new List<MarkViewData>();
+
+					foreach (var lecturesScheduleVisiting in lecturesVisitingData.OrderBy(e => e.Date))
+                    {
+                        var lecturesVisitMark = student.LecturesVisitMarks.FirstOrDefault(e => e.LecturesScheduleVisitingId == lecturesScheduleVisiting.Id);
+
+                        if (lecturesVisitMark != null)
+						{
+							data.Add(new MarkViewData
+							{
+								Date = lecturesScheduleVisiting.Date.ToShortDateString(),
+								LecuresVisitId = lecturesScheduleVisiting.Id,
+								Mark = lecturesVisitMark.Mark,
+								MarkId = lecturesVisitMark.Id,
+								Comment = lecturesVisitMark.Comment
+							});
+						}
+						else
+						{
+							data.Add(new MarkViewData
+							{
+								Date = lecturesScheduleVisiting.Date.ToShortDateString(),
+								LecuresVisitId = lecturesScheduleVisiting.Id,
+								Mark = string.Empty,
+								MarkId = 0
+							});
+						}
+					}
+
+					lecturesVisiting.Add(new LecturesMarkVisitingViewData
+					{
+						StudentId = student.Id,
+						StudentName = student.FullName,
+						Login = student.User.UserName,
+						Marks = data
+					});
+				}
+
+				var dataResulet = new List<LecturesGroupsVisitingViewData>
+                {
+                    new LecturesGroupsVisitingViewData
+                    {
+                        GroupId = groupId,
+                        LecturesMarksVisiting = lecturesVisiting
+                    }
+                };
+
+				return new LecturesMarkVisitingResult
+				{
+					GroupsVisiting = dataResulet,
+					Message = "",
+					Code = "200"
+				};
+			}
+			catch (Exception ex)
+			{
+				return new LecturesMarkVisitingResult()
+				{
+					Message = ex.Message + "\n" + ex.StackTrace,
+					Code = "500"
+				};
+			}
+		}
 
 		public GroupsResult GetGroupsByUser(string userId)
 		{
@@ -615,7 +637,7 @@ namespace LMPlatform.UI.Services
                                 data.Add(new MarkViewData
                                 {
                                     Date = lecturesScheduleVisiting.Date.ToShortDateString(),
-                                    LecturesVisitId = lecturesScheduleVisiting.Id,
+                                    LecuresVisitId = lecturesScheduleVisiting.Id,
                                     Mark = student.LecturesVisitMarks.FirstOrDefault(e => e.LecturesScheduleVisitingId == lecturesScheduleVisiting.Id).Mark,
                                     MarkId = student.LecturesVisitMarks.FirstOrDefault(e => e.LecturesScheduleVisitingId == lecturesScheduleVisiting.Id).Id
                                 });
@@ -625,7 +647,7 @@ namespace LMPlatform.UI.Services
                                 data.Add(new MarkViewData
                                 {
                                     Date = lecturesScheduleVisiting.Date.ToShortDateString(),
-                                    LecturesVisitId = lecturesScheduleVisiting.Id,
+                                    LecuresVisitId = lecturesScheduleVisiting.Id,
                                     Mark = string.Empty,
                                     MarkId = 0
                                 });
@@ -847,6 +869,6 @@ namespace LMPlatform.UI.Services
 			};
         }
 
-        protected int CurrentUserId => UserContext.CurrentUserId;
+        protected int CurrentUserId => WebSecurity.CurrentUserId;
 	}
 }

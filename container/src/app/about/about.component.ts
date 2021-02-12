@@ -3,7 +3,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AuthenticationService } from '../core/services/auth.service';
-import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   templateUrl: './about.component.html',
@@ -57,8 +56,5 @@ export class AboutComponent implements OnInit {
                 this.loading = false;
             });
   }
-  routeToLogin() {
-    this.router.navigate(['/']);
-    }
 
 }

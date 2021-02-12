@@ -8,9 +8,9 @@ namespace LMPlatform.AdaptiveLearningCore.ExtendedAdaptivityAlgorithm
 {
 	public class FuzzySetSolver
 	{
-		struct WeightFunctionElement
+		struct WieghtFunctionElement
 		{
-			public WeightFunctionElement(double val, double weight)
+			public WieghtFunctionElement(double val, double weight)
 			{
 				Value = Math.Round(val, 2);
 				Weight = ZeroIfSubZero(weight);
@@ -24,16 +24,16 @@ namespace LMPlatform.AdaptiveLearningCore.ExtendedAdaptivityAlgorithm
 			return val > 0 ? Math.Round(val, 2) : 0;
 		}
 
-		private static WeightFunctionElement GetNextWeight(double optimum, double currentVal, double lastWeight)
+		private static WieghtFunctionElement GetNextWeight(double optimum, double currentVal, double lastWeight)
 		{
 			var stepDif = Math.Abs(optimum - currentVal) / 2;
-			return new WeightFunctionElement(currentVal, lastWeight - stepDif);
+			return new WieghtFunctionElement(currentVal, lastWeight - stepDif);
 		}
-		private static List<WeightFunctionElement> GetWeightForOptimal(double optimum)
+		private static List<WieghtFunctionElement> GetWeightForOptimal(double optimum)
 		{
-			var resList = new List<WeightFunctionElement>();
+			var resList = new List<WieghtFunctionElement>();
 
-			resList.Add(new WeightFunctionElement(optimum, 1));
+			resList.Add(new WieghtFunctionElement(optimum, 1));
 
 			for (var i = optimum + 0.05; i < 1; i += 0.05)
 			{
@@ -53,10 +53,10 @@ namespace LMPlatform.AdaptiveLearningCore.ExtendedAdaptivityAlgorithm
 
 		}
 
-		private static IEnumerable<WeightFunctionElement> CalculateMedium(IEnumerable<WeightFunctionElement> good, IEnumerable<WeightFunctionElement> worse)
+		private static IEnumerable<WieghtFunctionElement> CalculateMedium(IEnumerable<WieghtFunctionElement> good, IEnumerable<WieghtFunctionElement> worse)
 		{
-			var notGood = good.Select(x => new WeightFunctionElement(x.Value, 1 - Math.Pow(x.Weight, 2)));
-			var notBad = worse.Select(x => new WeightFunctionElement(x.Value, 1 - Math.Pow(x.Weight, 2)));
+			var notGood = good.Select(x => new WieghtFunctionElement(x.Value, 1 - Math.Pow(x.Weight, 2)));
+			var notBad = worse.Select(x => new WieghtFunctionElement(x.Value, 1 - Math.Pow(x.Weight, 2)));
 
 			for (int i = 0; i < notGood.Count(); ++i)
 			{
@@ -64,9 +64,9 @@ namespace LMPlatform.AdaptiveLearningCore.ExtendedAdaptivityAlgorithm
 				yield return notBadVal.Value < notGoodVal.Value ? notBadVal : notGoodVal;
 			}
 		}
-		private static Dictionary<T, List<WeightFunctionElement>> CalculateWeights<T>(T[] enumVals, double optimum, bool isReversiveEstimation)
+		private static Dictionary<T, List<WieghtFunctionElement>> CalculateWeights<T>(T[] enumVals, double optimum, bool isReversiveEstimation)
 		{
-			var resDict = new Dictionary<T, List<WeightFunctionElement>>();
+			var resDict = new Dictionary<T, List<WieghtFunctionElement>>();
 
 			var good = GetWeightForOptimal(optimum);
 			resDict.Add(enumVals[3], good);
@@ -74,10 +74,10 @@ namespace LMPlatform.AdaptiveLearningCore.ExtendedAdaptivityAlgorithm
 			var theBest = GetWeightForOptimal(isReversiveEstimation ? 0 : 1);
 			resDict.Add(enumVals[4], theBest.ToList());
 
-			var worse = good.Select(x => new WeightFunctionElement(x.Value, 1 - x.Weight));
+			var worse = good.Select(x => new WieghtFunctionElement(x.Value, 1 - x.Weight));
 			resDict.Add(enumVals[1], worse.ToList());
 
-			var theWorst = worse.Select(x => new WeightFunctionElement(x.Value, Math.Pow(x.Weight, 2)));
+			var theWorst = worse.Select(x => new WieghtFunctionElement(x.Value, Math.Pow(x.Weight, 2)));
 			resDict.Add(enumVals[0], theWorst.ToList());
 
 			var medium = CalculateMedium(good, worse);
@@ -85,7 +85,7 @@ namespace LMPlatform.AdaptiveLearningCore.ExtendedAdaptivityAlgorithm
 
 			return resDict;
 		}
-		private static void PrepareCheckedValue<T>(ref double checkedValue, Dictionary<T, List<WeightFunctionElement>> weights)
+		private static void PrepareCheckedValue<T>(ref double checkedValue, Dictionary<T, List<WieghtFunctionElement>> weights)
 		{
 			while (true)
 			{
@@ -134,14 +134,7 @@ namespace LMPlatform.AdaptiveLearningCore.ExtendedAdaptivityAlgorithm
 					}).ToDictionary(x => x.Key, x => x.Value);
 
 				var loopRes = loopResDict.First(x => x.Value == loopResDict.Values.Max());
-				if (resDict.ContainsKey(loopRes.Key))
-				{
-					resDict[loopRes.Key] += loopRes.Value;
-				}
-				else
-				{
-					resDict.Add(loopRes.Key, loopRes.Value);
-				}
+				resDict.Add(loopRes.Key, loopRes.Value);
 			}
 			
 			return resDict.First(x => x.Value == resDict.Values.Max()).Key;

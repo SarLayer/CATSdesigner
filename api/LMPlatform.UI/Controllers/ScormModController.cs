@@ -8,12 +8,10 @@ using Application.Core.Data;
 using Ionic.Zip;
 using LMPlatform.Data.Repositories;
 using LMPlatform.Models;
-using LMPlatform.UI.Attributes;
 using SCORMHost;
 
 namespace LMPlatform.UI.Controllers
 {
-    [JwtAuth]
     public class ScormModController : Controller
     {
         public string ScoFilePath => ConfigurationManager.AppSettings["ScoFilePath"];

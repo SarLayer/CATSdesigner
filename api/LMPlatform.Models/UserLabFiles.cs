@@ -14,10 +14,6 @@ namespace LMPlatform.Models
 
 		public int SubjectId { get; set; }
 
-        public int? LabId { get; set; }
-
-        public Labs Lab { get; set; }
-
         public DateTime? Date { get; set; }
 
 		public bool IsReceived { get; set; }

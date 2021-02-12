@@ -1,12 +1,12 @@
-import { Attachment } from './file/attachment.model';
+import { Attachment } from './attachment.model';
 
 export class News {
-  NewsId: number;
-  Title: string;
-  Body: string;
-  DateCreate: string;
-  Disabled: boolean;
-  SubjectId: number;
-  PathFile: string;
-  Attachments: Attachment[];
+  id: number;
+  title: string;
+  body: string;
+  dateCreate: string;
+  disabled: boolean;
+  subjectId: string;
+  pathFile: string;
+  attachments?: Attachment[];
 }

@@ -345,9 +345,6 @@ namespace Application.Infrastructure.CPManagement
                             AssignedCourseProjectId = cp.Id,
                             Lecturer = lecturer.LastName + " " + lecturer.FirstName + " " + lecturer.MiddleName, //todo
                             Group = cp.CourseProject.Theme,
-                            Comment = cp.Comment,
-                            LecturerName = cp.LecturerName,
-                            MarkDate = cp.MarkDate,
                             PercentageResults = s.CoursePercentagesResults.Select(pr => new PercentageResultData
                             {
                                 Id = pr.Id,
@@ -370,7 +367,6 @@ namespace Application.Infrastructure.CPManagement
             {
                 return (from s in query
                         let lecturer = s.AssignedCourseProjects.FirstOrDefault().CourseProject.Lecturer
-                        let cp = s.AssignedCourseProjects.FirstOrDefault()
                         select new StudentData
                         {
                             Id = s.Id,
@@ -379,9 +375,6 @@ namespace Application.Infrastructure.CPManagement
                             AssignedCourseProjectId = s.AssignedCourseProjects.FirstOrDefault().Id,
                             Lecturer = lecturer.LastName + " " + lecturer.FirstName + " " + lecturer.MiddleName, //todo
                             Group = s.AssignedCourseProjects.FirstOrDefault().CourseProject.Theme,
-                            Comment = cp.Comment,
-                            LecturerName = cp.LecturerName,
-                            MarkDate = cp.MarkDate,
                             PercentageResults = s.CoursePercentagesResults.Select(pr => new PercentageResultData
                             {
                                 Id = pr.Id,
@@ -407,9 +400,6 @@ namespace Application.Infrastructure.CPManagement
             AuthorizationHelper.ValidateLecturerAccess(Context, lecturerId);
             var assignedCourseProject = Context.AssignedCourseProjects.Single(x => x.Id == courseStudentMarkModel.AssignedProjectId);
             assignedCourseProject.Mark = courseStudentMarkModel.Mark;
-            assignedCourseProject.MarkDate = courseStudentMarkModel.Date;
-            assignedCourseProject.Comment = courseStudentMarkModel.Comment;
-            assignedCourseProject.LecturerName = courseStudentMarkModel.LecturerName;
             Context.SaveChanges();
         }
 

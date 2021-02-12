@@ -31,7 +31,6 @@ h2, mat-label, p, div {
 }
 
 .mat-checkbox-label {
-  font-size: 14px;
   width: 100%;
 }
 
@@ -41,8 +40,6 @@ h2, mat-label, p, div {
 
 .mat-radio-label-content {
   width: 93%;
-  white-space: pre-wrap;
-  font-size: 14px;
 }
 
 .mat-table {
@@ -68,28 +65,21 @@ h2, mat-label, p, div {
   justify-content: space-around;
 }
 
-.mat-ripple {
-  opacity: 1;
-}
-
 .mat-tab-label {
   display: flex;
   font-size: 16px;
-  opacity: 1;
   width: inherit;
 }
 
 .mat-tab-label-active {
-  color: #3f51b5;
-  opacity: 1;
+  color: #00007d;
 }
 
 .mat-tab-label-content {
   line-height: 2.25rem;
-  font-family: var(--mdc-typography-button-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));
-  font-size: var(--mdc-typography-button-font-size, 0.875rem);
+  font: 600 .875rem Arial;
+  font-family: Roboto, sans-serif;
   letter-spacing: .0892857143em;
-  opacity: 1;
 }
 
 .mat-snack-bar-container {
@@ -98,12 +88,7 @@ h2, mat-label, p, div {
   height: 48px;
   position: sticky;
 }
-
-.mat-tab-header {
+.mat-tab-header{
   border-bottom: none;
   margin: 0 15px;
-}
-
-.mat-dialog-container {
-  padding: 12px 24px 24px;
 }

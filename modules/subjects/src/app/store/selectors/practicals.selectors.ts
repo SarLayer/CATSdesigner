@@ -1,10 +1,9 @@
-import { createFeatureSelector, createSelector } from "@ngrx/store";
+import { createSelector } from "@ngrx/store";
 import { IAppState } from '../state/app.state';
-import { IPracticalsState } from '../state/practicals.state';
 
-const practicalsSelector = createFeatureSelector<IAppState, IPracticalsState>('practicals');
+const practicalsState = (state: IAppState) => state.practicals;
 
 export const getPracticals = createSelector(
-  practicalsSelector,
+  practicalsState,
   state => state.practicals
 );

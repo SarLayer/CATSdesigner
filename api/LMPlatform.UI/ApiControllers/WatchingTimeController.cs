@@ -17,7 +17,6 @@ using iTextSharp.text.pdf;
 using Application.Infrastructure.FilesManagement;
 using System.IO;
 using System.Configuration;
-using Application.Core.Helpers;
 using WMPLib;
 using Application.Infrastructure.StudentManagement;
 
@@ -193,7 +192,7 @@ namespace LMPlatform.UI.ApiControllers
         // PUT api/<controller>/5
         public void Put(int id, [FromBody]string value)
         {
-            int userId = UserContext.CurrentUserId;
+            int userId = WebSecurity.GetUserId(HttpContext.Current.User.Identity.Name);
             Concept concept = ConceptManagementService.GetById(id);
             WatchingTimeService.SaveWatchingTime(new WatchingTime(userId, concept.Id, 10));
             //WatchingTimeService.SaveWatchingTime(new WatchingTime(userId, concept, 10));

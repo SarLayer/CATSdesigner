@@ -1,11 +1,10 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {BehaviorSubject, Observable} from 'rxjs';
-import { map } from 'rxjs/operators';
-
 import {Subject} from '../models/subject.model';
+import { SubjectForm } from '../models/subject-form.model';
 import { Lector } from '../models/lector.model';
-import { SubjectForm } from '../models/form/subject-form.model';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -41,10 +40,6 @@ export class SubjectService {
 
   public getCreateModel(): Observable<SubjectForm> {
     return this.http.get<SubjectForm>('Subject/Create');
-  }
-
-  public getAttachmentsAsZip(attachmentsIds: number[]): Observable<ArrayBuffer> {
-    return this.http.post('Subject/GetAttachmentsAsZip', { attachmentsIds }, { responseType: 'arraybuffer' });
   }
 
   public getLector(id: number): Observable<Lector> {

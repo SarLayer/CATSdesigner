@@ -8,7 +8,6 @@ using System.Net;
 using System.Text;
 using System.Web.Mvc;
 using Application.Core;
-using Application.Core.Helpers;
 using Application.Core.UI.Controllers;
 using Application.Core.UI.HtmlHelpers;
 using Application.Infrastructure;
@@ -110,7 +109,7 @@ namespace LMPlatform.UI.Controllers
 
         public ActionResult Index(int subjectId)
         {
-            if (this.SubjectManagementService.IsWorkingSubject(UserContext.CurrentUserId, subjectId))
+            if (this.SubjectManagementService.IsWorkingSubject(WebSecurity.CurrentUserId, subjectId))
             {
                 var model = new SubjectWorkingViewModel(subjectId);
                 return JsonResponse(model);
@@ -161,7 +160,7 @@ namespace LMPlatform.UI.Controllers
                 };
             }
 
-            model.Save(UserContext.CurrentUserId, color);
+            model.Save(WebSecurity.CurrentUserId, color);
             return null;
         }
 
@@ -255,25 +254,9 @@ namespace LMPlatform.UI.Controllers
                 {FileDownloadName = subGroup.Student.FullName.Replace(" ", "_") + ".zip"};
         }
 
-        [HttpPost]
-        public FileResult GetAttachmentsAsZip(IEnumerable<int> attachmentsIds)
-        {
-            var zip = new ZipFile(Encoding.UTF8);
-            var name = Guid.NewGuid().ToString();
-            var attachments = FilesManagementService.GetAttachmentsByIds(attachmentsIds);
-            UtilZip.CreateZipFile(ConfigurationManager.AppSettings["FileUploadPath"], zip, attachments.ToList(), name);
-
-            var memoryStream = new MemoryStream();
-            zip.Save(memoryStream);
-            memoryStream.Seek(0, SeekOrigin.Begin);
-
-            return new FileStreamResult(memoryStream, "application/zip")
-            { FileDownloadName = name + ".zip" };
-        }
-
         public ActionResult Subjects()
         {
-            var model = new SubjectManagementViewModel(UserContext.CurrentUserId.ToString(CultureInfo.InvariantCulture));
+            var model = new SubjectManagementViewModel(WebSecurity.CurrentUserId.ToString(CultureInfo.InvariantCulture));
             var subjects = model.Subjects;
             return JsonResponse(subjects);
         }
@@ -281,7 +264,7 @@ namespace LMPlatform.UI.Controllers
         public ActionResult GetSubjectsForCM()
         {
             var model = new SubjectManagementViewModel(
-                UserContext.CurrentUserId.ToString(CultureInfo.InvariantCulture));
+                WebSecurity.CurrentUserId.ToString(CultureInfo.InvariantCulture));
             var subjects = model.Subjects.Where(x => SubjectModuleRepository.GetCMSubjectIds().Contains(x.SubjectId))
                 .ToList();
             return JsonResponse(subjects);
@@ -324,20 +307,16 @@ namespace LMPlatform.UI.Controllers
             return null;
         }
 
-
-
         [HttpPost]
         public DataTablesResult<SubjectListViewModel> GetSubjects(DataTablesParam dataTableParam)
         {
             var searchString = dataTableParam.GetSearchString();
             var subjects = this.ApplicationService<ISubjectManagementService>().GetSubjectsLecturer(
-                UserContext.CurrentUserId, pageInfo: dataTableParam.ToPageInfo(), searchString: searchString);
+                WebSecurity.CurrentUserId, pageInfo: dataTableParam.ToPageInfo(), searchString: searchString);
 
             return DataTableExtensions.GetResults(subjects.Items.Select(this._GetSubjectRow), dataTableParam,
                 subjects.TotalCount);
         }
-
-        
 
         public SubjectListViewModel _GetSubjectRow(Subject subject)
         {
@@ -351,13 +330,13 @@ namespace LMPlatform.UI.Controllers
 
         public ActionResult IsAvailableSubjectName(string name, string id)
         {
-            return this.Json(!this.SubjectManagementService.IsSubjectName(name, id, UserContext.CurrentUserId),
+            return this.Json(!this.SubjectManagementService.IsSubjectName(name, id, WebSecurity.CurrentUserId),
                 JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult IsAvailableSubjectShortName(string name, string id)
         {
-            return this.Json(!this.SubjectManagementService.IsSubjectShortName(name, id, UserContext.CurrentUserId),
+            return this.Json(!this.SubjectManagementService.IsSubjectShortName(name, id, WebSecurity.CurrentUserId),
                 JsonRequestBehavior.AllowGet);
         }
     }

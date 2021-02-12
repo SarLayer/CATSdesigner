@@ -11,20 +11,11 @@ namespace LMPlatform.UI.Services.Modules
 	{
 		[DataMember]
 		public int? NextThemaId { get; set; }
-
+		
 		[DataMember]
-		public List<string> NextMaterialPath { get; set; }
+		public bool NeedToSelectAdaptivityType { get; set; }
 
 		[DataMember]
 		public bool NeedToDoPredTest { get; set; }
-
-		[DataMember]
-		public bool ShouldWaitBeforeTest { get; set; }
-
-		[DataMember]
-		public int? TimeToWait { get; set; }
-
-		[DataMember]
-		public bool IsLearningEnded { get; set; }
 	}
 }

@@ -1,4 +1,3 @@
-import { SubSink } from 'subsink';
 import {Component, OnInit} from '@angular/core';
 import {SubgroupingComponent} from '../subgrouping/subgrouping.component';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
@@ -9,8 +8,6 @@ import {SubjectManagementComponent} from '../../modules/subject/subject-managmen
 import {select, Store} from '@ngrx/store';
 import {IAppState} from '../../store/state/app.state';
 import {getSubjectId} from '../../store/selectors/subject.selector';
-import * as subjectActions from '../../store/actions/subject.actions';
-
 
 @Component({
   selector: 'sub-group-page',
@@ -18,7 +15,7 @@ import * as subjectActions from '../../store/actions/subject.actions';
   styleUrls: ['./sub-settings.component.less']
 })
 export class SubSettingsComponent implements OnInit {
-  private subs = new SubSink();
+
   constructor(public dialog: MatDialog,
               private store: Store<IAppState>) {
   }
@@ -28,6 +25,7 @@ export class SubSettingsComponent implements OnInit {
 
   supgrouping() {
     const dialogRef = this.openDialog(null, SubgroupingComponent);
+    let that = this;
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
 
@@ -36,21 +34,12 @@ export class SubSettingsComponent implements OnInit {
   }
 
   subjectEdit() {
-    this.subs.add(
-      this.store.pipe(select(getSubjectId)).subscribe(subjectId => {
-        const dialogData: DialogData = {
-          model: {subjectId: subjectId}
-        };
-        const dialogRef = this.openDialog(dialogData, SubjectManagementComponent);
-  
-          this.subs.add(
-            dialogRef.afterClosed().subscribe(result => {
-              if (result) {
-                this.store.dispatch(subjectActions.saveSubject({ subject: result }))
-              }
-            })
-          );
-      }));
+    this.store.pipe(select(getSubjectId)).subscribe(subjectId => {
+      const dialogData: DialogData = {
+        model: {subjectId: subjectId}
+      };
+      this.openDialog(dialogData, SubjectManagementComponent);
+    });
   }
 
   addProfes() {

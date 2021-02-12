@@ -5,15 +5,12 @@ using System.Web.Http;
 using System.Web.Http.ModelBinding;
 using Application.Core;
 using Application.Core.Data;
-using Application.Core.Helpers;
 using Application.Infrastructure.CPManagement;
 using Application.Infrastructure.CTO;
-using LMPlatform.UI.Attributes;
 using WebMatrix.WebData;
 
 namespace LMPlatform.UI.ApiControllers.CP
 {
-    [JwtAuth]
     public class CourseProjectController : ApiController
     {
 
@@ -27,7 +24,7 @@ namespace LMPlatform.UI.ApiControllers.CP
 
         public PagedList<CourseProjectData> Get([ModelBinder]GetPagedListParams parms)
         {
-            return CpManagementService.GetProjects(UserContext.CurrentUserId, parms);
+            return CpManagementService.GetProjects(WebSecurity.CurrentUserId, parms);
         }
 
         public CourseProjectData Get(int id)
@@ -45,9 +42,10 @@ namespace LMPlatform.UI.ApiControllers.CP
             return SaveProject(project);
         }
 
-        public void Post(int id)
+        [HttpDelete]
+        public void Delete(int id)
         {
-            CpManagementService.DeleteProject(UserContext.CurrentUserId, id);
+            CpManagementService.DeleteProject(WebSecurity.CurrentUserId, id);
         }
 
         private HttpResponseMessage SaveProject(CourseProjectData project)
@@ -57,7 +55,7 @@ namespace LMPlatform.UI.ApiControllers.CP
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
 
-            project.LecturerId = UserContext.CurrentUserId;
+            project.LecturerId = WebSecurity.CurrentUserId;
             
             CpManagementService.SaveProject(project);
             return new HttpResponseMessage(HttpStatusCode.OK);

@@ -6,6 +6,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {IAppState} from '../../../../store/state/app.state';
 import {PracticalRestService} from '../../../../services/practical/practical-rest.service';
 import {Group} from '../../../../models/group.model';
+import {ScheduleProtectionLab} from '../../../../models/lab.model';
 
 @Component({
   selector: 'app-visit-statistic',
@@ -33,7 +34,7 @@ export class VisitStatisticComponent implements OnInit {
       this.store.pipe(select(getCurrentGroup)).subscribe(group => {
         this.group = group;
         // this.practicalService.loadData();
-        
+        //
         // this.practicalService.getCalendar().subscribe(res => {
         //   this.scheduleProtection = res;
         // });
@@ -46,8 +47,9 @@ export class VisitStatisticComponent implements OnInit {
   }
 
   refreshMarks() {
-    this.practicalService.getMarks(this.subjectId, this.group.GroupId).subscribe(res => {
+    this.practicalService.getMarks(this.subjectId, this.group.groupId).subscribe(res => {
       this.student = res;
+      console.log(res)
       res && this.setDisplayColumn(res);
     })
   }

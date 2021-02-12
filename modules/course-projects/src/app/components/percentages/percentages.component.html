@@ -1,5 +1,5 @@
 <div class="percentages-component" *ngIf="percentages; else load">
-  <div class="percentages-component__header" *ngIf="courseUser.IsLecturer">
+  <div class="header">
     <button mat-raised-button class="actions" color="primary" *ngIf="courseUser.IsLecturer" (click)="addStage()">Добавить этап</button>
   </div>
   <div class="percentages-component__body">

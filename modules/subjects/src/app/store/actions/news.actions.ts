@@ -1,8 +1,6 @@
 import { createAction } from '@ngrx/store';
 import { props } from '@ngrx/store';
-
 import {News} from '../../models/news.model';
-import { CreateNewsEntity } from './../../models/form/create-news-entity.model';
 
 export const loadNews = createAction(
   '[News] Load News',
@@ -15,13 +13,20 @@ export const loadNewsSuccess = createAction(
 
 export const saveNews = createAction(
   '[News] Save News',
-  props<{ news: CreateNewsEntity }>()
+  props<{ news: News }>()
 );
 
+export const saveNewsSuccess = createAction(
+  '[News] Save News Success'
+);
 
 export const deleteNewsById = createAction(
   '[News] Delete News By Id',
   props<{ id: number }>()
+);
+
+export const deleteNewsSuccess = createAction(
+  '[News] Delete News Success'
 );
 
 export const disableAllNews = createAction(

@@ -3,23 +3,20 @@ using System.Net.Http;
 using System.Web.Http;
 using Application.Core;
 using Application.Core.Data;
-using Application.Core.Helpers;
 using Application.Infrastructure.DPManagement;
 using Application.Infrastructure.DTO;
-using LMPlatform.UI.Attributes;
 using WebMatrix.WebData;
 
 namespace LMPlatform.UI.ApiControllers.DP
 {
-    [JwtAuth]
     public class PercentageResultController : ApiController
     {
         public object Get([System.Web.Http.ModelBinding.ModelBinder]GetPagedListParams parms)
         {
             return new
             {
-                Students = DpManagementService.GetGraduateStudentsForUser(UserContext.CurrentUserId, parms),
-                PercentageGraphs = PercentageService.GetPercentageGraphsForLecturerAll(UserContext.CurrentUserId, parms)
+                Students = DpManagementService.GetGraduateStudentsForUser(WebSecurity.CurrentUserId, parms),
+                PercentageGraphs = PercentageService.GetPercentageGraphsForLecturerAll(WebSecurity.CurrentUserId, parms)
             };
         }
 
@@ -40,7 +37,7 @@ namespace LMPlatform.UI.ApiControllers.DP
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
 
-            PercentageService.SavePercentageResult(UserContext.CurrentUserId, percentageResult);
+            PercentageService.SavePercentageResult(WebSecurity.CurrentUserId, percentageResult);
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
 

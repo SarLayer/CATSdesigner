@@ -1,35 +1,15 @@
-import { ILabsState } from './../state/labs.state';
-import {createFeatureSelector, createSelector} from '@ngrx/store';
+import {createSelector} from '@ngrx/store';
 import {IAppState} from '../state/app.state';
+import {LabsState} from '../state/labs.state';
 
-const labsSelector = createFeatureSelector<IAppState, ILabsState>('labs');
+const labsSelector = (state: IAppState) => state.labs;
 
 export const getLabs = createSelector(
   labsSelector,
-  state => state.labs
+  (state: LabsState) => state.labs
 );
 
 export const getLabsCalendar = createSelector(
   labsSelector,
-  state => state.schedule
-);
-
-export const getLabStudents = createSelector(
-  labsSelector,
-  state => state.students
-);
-
-export const getStudentsLabsFiles = createSelector(
-  labsSelector,
-  state => state.studentsLabsFiles
-);
-
-export const getUserLabsFiles = createSelector(
-  labsSelector,
-  state => state.userLabsFiles
-);
-
-export const HasJobProtections = createSelector(
-  labsSelector,
-  state => state.hasJobProtections
+  (state: LabsState) => state.schedule
 );

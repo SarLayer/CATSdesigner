@@ -8,13 +8,10 @@ using LMPlatform.UI.Services.Modules;
 using LMPlatform.UI.Services.Modules.Messages;
 using Newtonsoft.Json;
 using Application.Core.Extensions;
-using Application.Core.Helpers;
-using LMPlatform.UI.Attributes;
 using WebMatrix.WebData;
 
 namespace LMPlatform.UI.Services.Messages
 {
-    [JwtAuth]
     public class MessagesService : IMessagesService
     {
         private readonly LazyDependency<IMessageManagementService> _messageManagementService =
@@ -24,7 +21,7 @@ namespace LMPlatform.UI.Services.Messages
 
         public MessagesResult GetMessages()
         {
-	        return this.GetMessagesByUserId(UserContext.CurrentUserId);
+	        return this.GetMessagesByUserId(WebSecurity.CurrentUserId);
         }
 
         public MessagesResult GetMessagesByUserId(int userId)
@@ -62,7 +59,7 @@ namespace LMPlatform.UI.Services.Messages
 
         public DisplayMessageResult GetMessage(string id)
         {
-	        return this.GetUserMessage(id, UserContext.CurrentUserId);
+	        return this.GetUserMessage(id, WebSecurity.CurrentUserId);
         }
 
         public DisplayMessageResult GetUserMessage(string id, int userId)
@@ -111,7 +108,7 @@ namespace LMPlatform.UI.Services.Messages
 
         public ResultViewData Save(string subject, string body, int[] recipients, Attachment[] attachments)
         {
-	        return this.SaveFromUserId(subject, body, recipients, attachments, UserContext.CurrentUserId);
+	        return this.SaveFromUserId(subject, body, recipients, attachments, WebSecurity.CurrentUserId);
         }
 
         public ResultViewData SaveFromUserId(string subject, string body, int[] recipients, Attachment[] attachments, int fromId)
@@ -168,7 +165,7 @@ namespace LMPlatform.UI.Services.Messages
 
         public ResultViewData Delete(int messageId)
         {
-	        return this.DeleteUserMessage(messageId, UserContext.CurrentUserId);
+	        return this.DeleteUserMessage(messageId, WebSecurity.CurrentUserId);
         }
 
         public ResultViewData DeleteUserMessage(int messageId, int userId)

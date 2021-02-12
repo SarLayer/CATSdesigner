@@ -14,12 +14,10 @@ using Application.Core.Exceptions;
 using Application.Core.UI;
 using Application.Core.UI.Controllers;
 using Application.Infrastructure.FilesManagement;
-using LMPlatform.UI.Attributes;
 using Newtonsoft.Json;
 
 namespace LMPlatform.UI.ApiControllers
 {
-    [JwtAuth]
     public class UploadController : ApiController
 	{
 		private readonly LazyDependency<IFilesManagementService> _filesManagementService = new LazyDependency<IFilesManagementService>();
@@ -34,18 +32,17 @@ namespace LMPlatform.UI.ApiControllers
 
 		#region UploadController Members
 
-		[System.Web.Http.HttpPost]
-		public HttpStatusCodeResult DeleteFiles(string filename)
+		[System.Web.Http.HttpDelete]
+		public string DeleteFiles()
 		{
-			try
-            {
-				var split = filename.Split(new string[] { "//" }, StringSplitOptions.None);
-				FilesManagementService.DeleteFileAttachment(split[0], split[1]);
-				return new HttpStatusCodeResult(HttpStatusCode.OK);
-			} catch (Exception ex)
-            {
-				return new HttpStatusCodeResult(HttpStatusCode.BadRequest, ex.Message);
-            }
+		    var context = HttpContext.Current;
+            var file = _storageRootTemp + "/" + context.Request["filename"];
+            if (File.Exists(file))
+		    {
+                File.Delete(file);    
+		    }
+
+			return HttpStatusCode.OK.ToString();
 		}
 
 		[System.Web.Http.HttpGet]

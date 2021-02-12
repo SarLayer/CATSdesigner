@@ -1,14 +1,11 @@
 import { initialSubjectState, ISubjectState } from "./subject.state";
-import { filesInitialState, IFilesState } from './files.state';
 
 export interface IAppState {
-  subject: ISubjectState;
-  files: IFilesState;
+  subject: ISubjectState;  
 }
 
 export const initialAppState: IAppState = {
-  subject: initialSubjectState,
-  files: filesInitialState
+  subject: initialSubjectState  
 };
 
 export function getInitialState(): IAppState {

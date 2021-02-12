@@ -1,32 +1,21 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { createSelector } from '@ngrx/store';
 import {IAppState} from "../state/app.state";
 import {ISubjectState} from "../state/subject.state";
 
-const subjectSelector = createFeatureSelector<IAppState, ISubjectState>('subject');
-
-export const getSelectedSubject = createSelector(
-  subjectSelector,
-  state => state.selectedSubject
+export const subjectSelector = createSelector(
+  (state: IAppState) => state.subject,
+  subject => subject
 );
 
 export const getSubjectId = createSelector(
-  getSelectedSubject,
-  subject => !!subject ? subject.id : -1
+  subjectSelector,
+  (state: ISubjectState) => state.subjectId
 );
 
-export const getSubjectColor = createSelector(
-  getSelectedSubject,
-  subject => !!subject ? subject.color : ''
-);
 
 export const getUser = createSelector(
   subjectSelector,
-  state => state.user
-);
-
-export const getUserId = createSelector(
-  getUser,
-  user => user ? user.id : null
+  (state: ISubjectState) => state.user
 );
 
 export const isTeacher = createSelector(

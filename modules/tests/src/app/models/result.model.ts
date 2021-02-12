@@ -1,6 +1,5 @@
 import {TestPassResult} from "./test-pass-result.model";
 
-
 export class Result {
   public Login: string;
   public Marks: any;
@@ -10,5 +9,4 @@ export class Result {
   public SubGroup: string;
   public TestPassResults: TestPassResult[];
   public groupName: string;
-  public groupId: string;
 }

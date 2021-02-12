@@ -9,7 +9,7 @@ import { NavComponent } from './layout/nav/nav.component';
 import { FooterComponent } from './layout/footer/footer.component';
 
 import { MatetialModule } from './shared/matetial/matetial.module';
-import {TranslatePipe} from "./pipe/translate.pipe";
+
 import { CoreModule } from './core/core.module';
 import { SubjectsNavComponent } from './layout/subjects-nav/subjects-nav.component';
 import { LayoutService } from './layout/layout.service';
@@ -18,11 +18,7 @@ import { AdminComponent } from './admin/admin.component';
 import { ProgressControlComponent } from './progress-control/progress-control.component';
 import { RegisterComponent } from './register/register.component';
 import { ConfirmationComponent } from './confirmation/confirmation.component';
-import { AboutComponent } from './about/about.component';
-import { MatButtonModule } from '@angular/material/button';
 import { ResetComponent } from './reset/reset.component';
-import { ToastModule } from './toast';
-
 
 @NgModule({
   declarations: [
@@ -36,9 +32,7 @@ import { ToastModule } from './toast';
     ProgressControlComponent,
     RegisterComponent,
     ConfirmationComponent,
-    AboutComponent,
-    ResetComponent,
-    TranslatePipe
+    ResetComponent
   ],
   imports: [
     BrowserModule,
@@ -46,16 +40,12 @@ import { ToastModule } from './toast';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     MatetialModule,
-    CoreModule,
-    MatButtonModule,
-    ToastModule.forRoot()
+    CoreModule
+    
   ],
   providers: [
-    LayoutService,
-    TranslatePipe
+    LayoutService
   ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-
-

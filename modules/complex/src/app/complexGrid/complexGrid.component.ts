@@ -23,8 +23,6 @@ export class ComplexGridComponent implements OnInit {
   subjectName;
   subjectId;
 
-  isLucturer: boolean;
-
   constructor(public dialog: MatDialog,
         private complexService: ComplexService,
         private store: Store<IAppState>,
@@ -33,9 +31,6 @@ export class ComplexGridComponent implements OnInit {
       return false;
     };
     this.router.onSameUrlNavigation = 'reload';
-
-    const user = JSON.parse(localStorage.getItem("currentUser"));
-    this.isLucturer = user.role === 'lector';
   }
 
   ngOnInit(): void {

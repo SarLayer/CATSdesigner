@@ -15,7 +15,7 @@ namespace LMPlatform.UI.Services.Modules
         public int MarkId { get; set; }
 
         [DataMember]
-        public int LecturesVisitId { get; set; }
+        public int LecuresVisitId { get; set; }
 
         [DataMember]
         public string Comment { get; set; }

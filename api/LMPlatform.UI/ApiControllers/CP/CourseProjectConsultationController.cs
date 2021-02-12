@@ -3,20 +3,17 @@ using System.Net.Http;
 using System.Web.Http;
 using Application.Core;
 using Application.Core.Data;
-using Application.Core.Helpers;
 using Application.Infrastructure.CPManagement;
 using Application.Infrastructure.CTO;
-using LMPlatform.UI.Attributes;
 using WebMatrix.WebData;
 
 namespace LMPlatform.UI.ApiControllers.CP
 {
-    [JwtAuth]
     public class CourseProjectConsultationController : ApiController
     {
         public object Get([System.Web.Http.ModelBinding.ModelBinder]GetPagedListParams parms)
         {
-            var lecturerId = UserContext.CurrentUserId;
+            var lecturerId = WebSecurity.CurrentUserId;
             if (parms.Filters.ContainsKey("lecturerId"))
             {
                 lecturerId = int.Parse(parms.Filters["lecturerId"]);
@@ -48,7 +45,7 @@ namespace LMPlatform.UI.ApiControllers.CP
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
 
-            PercentageService.SaveConsultationMark(UserContext.CurrentUserId, consultationMark);
+            PercentageService.SaveConsultationMark(WebSecurity.CurrentUserId, consultationMark);
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
 

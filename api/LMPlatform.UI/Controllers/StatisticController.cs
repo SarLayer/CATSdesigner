@@ -10,12 +10,10 @@ using Application.Infrastructure.GroupManagement;
 using Application.Infrastructure.LecturerManagement;
 using Application.Infrastructure.StudentManagement;
 using Application.Infrastructure.SubjectManagement;
-using LMPlatform.UI.Attributes;
 using LMPlatform.UI.Services.Modules;
 
 namespace LMPlatform.UI.Controllers
 {
-    [JwtAuth]
     public class StatisticController : Controller
     {
         private readonly LazyDependency<IFilesManagementService> filesManagementService =

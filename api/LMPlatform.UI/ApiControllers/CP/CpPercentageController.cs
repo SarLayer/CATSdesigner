@@ -4,15 +4,12 @@ using System.Web.Http;
 using System.Web.Http.ModelBinding;
 using Application.Core;
 using Application.Core.Data;
-using Application.Core.Helpers;
 using Application.Infrastructure.CPManagement;
 using Application.Infrastructure.CTO;
-using LMPlatform.UI.Attributes;
 using WebMatrix.WebData;
 
 namespace LMPlatform.UI.ApiControllers.CP
 {
-    [JwtAuth]
     public class CpPercentageController : ApiController
     {
         private readonly LazyDependency<ICpPercentageGraphService> _percentageService = new LazyDependency<ICpPercentageGraphService>();
@@ -24,7 +21,7 @@ namespace LMPlatform.UI.ApiControllers.CP
 
         public PagedList<PercentageGraphData> Get([ModelBinder]GetPagedListParams parms)
         {
-            return PercentageService.GetPercentageGraphs(UserContext.CurrentUserId, parms);
+            return PercentageService.GetPercentageGraphs(WebSecurity.CurrentUserId, parms);
         }
 
         public PercentageGraphData Get(int id)
@@ -42,9 +39,10 @@ namespace LMPlatform.UI.ApiControllers.CP
             return SavePercentage(percentage);
         }
 
-        public void Post(int id)
+        [HttpDelete]
+        public void Delete(int id)
         {
-            PercentageService.DeletePercentage(UserContext.CurrentUserId, id);
+            PercentageService.DeletePercentage(WebSecurity.CurrentUserId, id);
         }
 
         private HttpResponseMessage SavePercentage(PercentageGraphData percentage)
@@ -54,7 +52,7 @@ namespace LMPlatform.UI.ApiControllers.CP
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
             
-            PercentageService.SavePercentage(UserContext.CurrentUserId, percentage);
+            PercentageService.SavePercentage(WebSecurity.CurrentUserId, percentage);
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
     }

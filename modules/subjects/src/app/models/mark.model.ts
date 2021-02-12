@@ -1,6 +1,6 @@
 export class Mark {
   LecturesVisitId: number;
   Mark: string;
-  MarkId: number;
+  MarkId: string;
   Comment: string
 }

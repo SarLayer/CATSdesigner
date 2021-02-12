@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using Application.Core;
-using Application.Core.Helpers;
 using Application.Infrastructure.GroupManagement;
 using Application.Infrastructure.LecturerManagement;
 using Application.Infrastructure.ProjectManagement;
@@ -94,9 +93,9 @@ namespace LMPlatform.UI.ViewModels.BTSViewModels
         {
             var groups = new List<Group>();
 
-            var user = new UsersManagementService().GetUser(UserContext.CurrentUserId);
+            var user = new UsersManagementService().GetUser(WebSecurity.CurrentUserId);
             if (user != null)
-                groups = this.GetAssignedGroups(UserContext.CurrentUserId);
+                groups = this.GetAssignedGroups(WebSecurity.CurrentUserId);
             else
                 groups = new GroupManagementService().GetGroups();
 

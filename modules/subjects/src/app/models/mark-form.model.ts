@@ -1,7 +1,6 @@
 export class MarkForm {
   lector: number;
-  mark: string;
+  mark: number;
   date: string;
   comment: string;
-  showForStudent: boolean;
 }

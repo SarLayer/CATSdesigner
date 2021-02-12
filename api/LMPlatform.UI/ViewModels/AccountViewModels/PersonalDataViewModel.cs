@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Application.Core;
-using Application.Core.Helpers;
 using Application.Infrastructure.LecturerManagement;
 using Application.Infrastructure.StudentManagement;
 using Application.Infrastructure.UserManagement;
@@ -63,9 +62,9 @@ namespace LMPlatform.UI.ViewModels.AccountViewModels
 
         public PersonalDataViewModel()
         {
-            if (LecturerManagementService.GetLecturer(UserContext.CurrentUserId) != null)
+            if (LecturerManagementService.GetLecturer(WebSecurity.CurrentUserId) != null)
             {
-                var user = LecturerManagementService.GetLecturer(UserContext.CurrentUserId);
+                var user = LecturerManagementService.GetLecturer(WebSecurity.CurrentUserId);
                 Name = user.FirstName;
 	            Skill = user.Skill;
 				Surname = user.LastName;
@@ -80,9 +79,9 @@ namespace LMPlatform.UI.ViewModels.AccountViewModels
 	            IsActive = user.IsActive;
 	            IsLecturerHasGraduateStudents = user.IsLecturerHasGraduateStudents;
             }
-            else if (StudentManagementService.GetStudent(UserContext.CurrentUserId) != null)
+            else if (StudentManagementService.GetStudent(WebSecurity.CurrentUserId) != null)
             {
-                var user = StudentManagementService.GetStudent(UserContext.CurrentUserId);
+                var user = StudentManagementService.GetStudent(WebSecurity.CurrentUserId);
                 Name = user.FirstName;
 				Patronymic = user.MiddleName;
 				Surname = user.LastName;

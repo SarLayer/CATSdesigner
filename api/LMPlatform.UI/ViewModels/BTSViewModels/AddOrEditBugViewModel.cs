@@ -7,7 +7,6 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Application.Core;
-using Application.Core.Helpers;
 using Application.Infrastructure.BugManagement;
 using Application.Infrastructure.ProjectManagement;
 using Application.Infrastructure.UserManagement;
@@ -90,7 +89,7 @@ namespace LMPlatform.UI.ViewModels.BTSViewModels
 
         public AddOrEditBugViewModel()
         {
-            CreatorId = UserContext.CurrentUserId;
+            CreatorId = WebSecurity.CurrentUserId;
         }
 
         public AddOrEditBugViewModel(int bugId)
@@ -128,7 +127,7 @@ namespace LMPlatform.UI.ViewModels.BTSViewModels
             var users = new List<User>();
 
             var currProjectUser =
-                context.GetProjectUsers(ProjectId).Single(e => e.UserId == UserContext.CurrentUserId);
+                context.GetProjectUsers(ProjectId).Single(e => e.UserId == WebSecurity.CurrentUserId);
             if (currProjectUser.ProjectRoleId == 1)
             {
                 users.Add(_context.GetUser(currProjectUser.UserId));
@@ -154,7 +153,7 @@ namespace LMPlatform.UI.ViewModels.BTSViewModels
             var statuses = new List<BugStatus>();
 
             var userRoleOnProject =
-                new ProjectManagementService().GetProjectsOfUser(UserContext.CurrentUserId).Single(e => e.ProjectId == ProjectId).ProjectRoleId;
+                new ProjectManagementService().GetProjectsOfUser(WebSecurity.CurrentUserId).Single(e => e.ProjectId == ProjectId).ProjectRoleId;
 
             switch (userRoleOnProject)
             {
@@ -363,7 +362,7 @@ namespace LMPlatform.UI.ViewModels.BTSViewModels
 
         public IList<SelectListItem> GetProjectNames()
         {
-            var projectUsers = new ProjectManagementService().GetProjectsOfUser(UserContext.CurrentUserId);
+            var projectUsers = new ProjectManagementService().GetProjectsOfUser(WebSecurity.CurrentUserId);
             var projects = new List<Project>();
             foreach (var projectUser in projectUsers)
             {
@@ -406,7 +405,7 @@ namespace LMPlatform.UI.ViewModels.BTSViewModels
                 bug.ReportingDate = DateTime.Today;
                 bug.StatusId = 1;
                 bug.AssignedDeveloperId = 0;
-                bug.ReporterId = UserContext.CurrentUserId;
+                bug.ReporterId = WebSecurity.CurrentUserId;
             }
             else
             {

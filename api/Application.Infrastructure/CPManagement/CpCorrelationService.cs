@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Application.Core;
-using Application.Core.Helpers;
 using Application.Infrastructure.CTO;
 using LMPlatform.Data.Infrastructure;
 using WebMatrix.WebData;
@@ -102,7 +101,7 @@ namespace Application.Infrastructure.CPManagement
        private List<Correlation> GetCourseProjectTaskSheetTemplateCorrelation(int subjectId, int? id)
         {
             return Context.CourseProjectTaskSheetTemplates
-                    .Where(x => x.LecturerId == UserContext.CurrentUserId)
+                    .Where(x => x.LecturerId == WebSecurity.CurrentUserId)
                     .Select(x => new Correlation
                     {
                         Id = x.Id,

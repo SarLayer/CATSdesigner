@@ -49,7 +49,5 @@
         }
 
         public ICollection<StudentLabMark> StudentLabMarks { get; set; } 
-
-        public ICollection<UserLabFiles> UserLabFiles { get; set; }
     }
 }

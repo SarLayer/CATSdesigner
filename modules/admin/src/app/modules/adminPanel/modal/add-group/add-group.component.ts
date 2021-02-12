@@ -38,14 +38,9 @@ export class AddGroupComponent implements OnInit {
   yearOfReceipt() {
     const yearArr = new Array();
     let currentYear = new Date().getFullYear();
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 10; i++) {
       yearArr.push(currentYear);
       currentYear--;
-    }
-    currentYear = new Date().getFullYear()
-    for (let i = 0; i < 20; i++) {
-      yearArr.push(currentYear);
-      currentYear++;
     }
     return yearArr;
   }
@@ -53,12 +48,7 @@ export class AddGroupComponent implements OnInit {
   yearOfIssue() {
     const yearArr = new Array();
     let currentYear = new Date().getFullYear();
-    for (let i = 0; i < 20; i++) {
-      yearArr.push(currentYear);
-      currentYear--;
-    }
-    currentYear = new Date().getFullYear()
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 6; i++) {
       yearArr.push(currentYear);
       currentYear++;
     }

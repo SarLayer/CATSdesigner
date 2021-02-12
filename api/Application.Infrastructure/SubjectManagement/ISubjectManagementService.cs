@@ -11,8 +11,6 @@ namespace Application.Infrastructure.SubjectManagement
     {
         List<Subject> GetUserSubjects(int userId);
 
-        bool IsUserAssignedToSubject(int useId, int subjectId);
-
         List<Subject> GetUserSubjectsV2(int userId);
 
         List<Subject> GetGroupSubjects(int groupId);
@@ -55,15 +53,11 @@ namespace Application.Infrastructure.SubjectManagement
 
         Lectures SaveLectures(Lectures lectures, IList<Attachment> attachments, int userId);
 
-        Lectures UpdateLectureOrder(Lectures lectures, int order);
+        Lectures UpdateLectureOrder(int id, int order);
 
-        Labs UpdateLabOrder(Labs labs, int order);
+        Labs UpdateLabOrder(int id, int order);
 
-        Practical UpdatePracticalOrder(Practical practical, int order);
-
-        IList<Labs> GetSubjectLabs(int subjectId);
-        IList<Practical> GetSubjectPracticals(int subjectId);
-        IList<Lectures> GetSubjectLectures(int subjectId);
+        Practical UpdatePracticalOrder(int id, int order);
 
         Labs SaveLabs(Labs labs, IList<Attachment> attachments, int userId);
 

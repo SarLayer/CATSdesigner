@@ -4,12 +4,10 @@ using LMPlatform.UI.Services.Modules.Files;
 using System.Configuration;
 using Application.Core;
 using Application.Infrastructure.FilesManagement;
-using LMPlatform.UI.Attributes;
 
 namespace LMPlatform.UI.Services.Files
 {
-    [JwtAuth]
-    public class FilesService : IFilesService
+	public class FilesService : IFilesService
 	{
 		private readonly LazyDependency<IFilesManagementService> _filesManagementService =
 			new LazyDependency<IFilesManagementService>();
@@ -68,6 +66,5 @@ namespace LMPlatform.UI.Services.Files
 				};
 			}
 		}
-
 	}
 }
